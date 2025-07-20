@@ -9,7 +9,38 @@ struct ResultView: View {
     var body: some View {
         ZStack {
             VStack {
+                Text("Apple Quiz")
+                    .font(.title)
+                    .fontWeight(.bold)
+                    .foregroundStyle(Color(.white))
+                    .padding(.top,20)
                 
+                Spacer()
+                
+                VStack{
+                    Text("結果")
+                        .font(.system(size:36, weight: .semibold))
+                        .foregroundStyle(Color(.white))
+                        Text("\(score)/\(totalQuestions)門正解")
+                        .font(.system(size: 28, weight:.medium))
+                        .foregroundStyle(Color(.white))
+                }
+                Spacer()
+                
+                Button{
+                    score = 0
+                    currentScreen = .start
+                }label:{
+                    Text("タイトルへ戻る")
+                        .font(.system(size:18, weight:.bold))
+                        .padding(.vertical, 20)
+                        .padding(.horizontal, 70)
+                        .background(.white)
+                        .foregroundStyle(Color(.background))
+                        .clipShape(.rect(cornerRadius: 10))
+                    
+                    
+                }
             }
             .padding()
         }

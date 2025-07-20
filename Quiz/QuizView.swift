@@ -9,9 +9,9 @@ struct QuizView: View {
     let quizItems: [QuizItem] = [
         QuizItem(question:"iPhoneの開発会社",options:["Google","Apple","Samsung"],correctAnswerIndex:1),
         QuizItem(question: "Appleの共同創業者は誰？（一人選んでください）", options: ["ビル・ゲイツ", "スティーブ・ウォズニアック", "ラリー・ペイジ"], correctAnswerIndex: 1),
-                QuizItem(question: "最初のMacintoshが発表された年は？", options: ["1976年", "1984年", "1998年"], correctAnswerIndex: 1),
-                QuizItem(question: "Appleの本社があるカリフォルニア州の都市は？", options: ["サンフランシスコ", "パロアルト", "クパチーノ"], correctAnswerIndex: 2),
-                QuizItem(question: "SwiftUIが最初に発表されたWWDCの年は？", options: ["2017", "2019", "2021"], correctAnswerIndex: 1)
+        QuizItem(question: "最初のMacintoshが発表された年は？", options: ["1976年", "1984年", "1998年"], correctAnswerIndex: 1),
+        QuizItem(question: "Appleの本社があるカリフォルニア州の都市は？", options: ["サンフランシスコ", "パロアルト", "クパチーノ"], correctAnswerIndex: 2),
+        QuizItem(question: "SwiftUIが最初に発表されたWWDCの年は？", options: ["2017", "2019", "2021"], correctAnswerIndex: 1)
     ]
     
     @State private var currentQuestionIndex = 0
@@ -36,18 +36,28 @@ struct QuizView: View {
                 Text(currentQuestion.question)
                     .font(.system(size: 22, weight:.medium))
                     .foregroundStyle(Color(.white))
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal)
-                        .frame(minHeight: 100, alignment:.center)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal)
+                    .frame(minHeight: 100, alignment:.center)
                 // Question Text
-                    Spacer()
+                Spacer()
                 
                 // Feedback Message Area
+                Text(isCorrect ? "正解！" : "不正解...正解は「\(currentQuestion.options[currentQuestion.correctAnswerIndex])」")
+                    .font(.headline)
+                    .padding(10)
+                    .background(.thinMaterial)
+                    .foregroundStyle(Color(isCorrect ? .green:.red))
+                    .clipShape(.rect(cornerRadius:10))
+                    .opacity(isShowingFeedback ? 1 : 0)
                 
+                Spacer()
+                
+                Spacer()
                 
                 // Answer Options
                 VStack(spacing: 16){
-                    ForEach(0..<currentQuestion.options.count,id \.self) { index in
+                    ForEach(0..<currentQuestion.options.count,id: \.self) { index in
                         Button{
                             answerTapped(index)
                         }label: {
@@ -70,9 +80,26 @@ struct QuizView: View {
         }
     }
     // ボタンがタップされたときの処理
-    
+    func answerTapped(_ index: Int){
+        isShowingFeedback = true
+        
+        if index == currentQuestion.correctAnswerIndex{
+            isCorrect = true
+            score += 1
+        }else{
+            isCorrect = false
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0){
+            isShowingFeedback = false
+            if currentQuestionIndex < quizItems.count - 1{
+                currentQuestionIndex += 1
+                isShowingFeedback = false
+            }else{
+                currentScreen = .result
+            }
+        }
+    }
 }
-
 // MARK: - Preview
 #Preview {
     @Previewable @State var currentScreen: Screen = .quiz
